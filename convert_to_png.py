@@ -18,7 +18,7 @@ def convert_img_to_png(input_img_path, output_image_path):
         img.save(output_image_path)
 
 if __name__ == "__main__":
-    input_img_path = "output_image.img"  # Replace with your input .img file path
+    input_img_path = "selected_quadrant.img"  # Replace with your input .img file path
     output_image_path = "converted_image.png"  # Replace with your desired output .png file path
     
     convert_img_to_png(input_img_path, output_image_path)

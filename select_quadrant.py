@@ -31,22 +31,30 @@ def select_quadrant_from_console():
     
     return selection
 
-def convert_quadrant_to_img(quadrant, output_img_path):
-    width, height = quadrant.size
-    pixel_data = np.array(quadrant)
-    
+def convert_quadrant_to_grayscale_img(quadrant, output_img_path):
+    # Convert to grayscale
+    grayscale_quadrant = quadrant.convert('L')  # 'L' mode = 8-bit pixels, black and white
+
+    # Convert image to numpy array
+    pixel_data = np.array(grayscale_quadrant)
+
+    # Get dimensions
+    width, height = grayscale_quadrant.size
+
     with open(output_img_path, 'wb') as f:
-        f.write(struct.pack('III', width, height, 3))
+        # Save metadata: width, height, depth (1 for grayscale)
+        f.write(struct.pack('III', width, height, 1))
+        # Save pixel values as raw bytes
         pixel_data.tofile(f)
 
 if __name__ == "__main__":
     input_image_path = "input_image.png"
-    output_img_path = "selected_quadrant.img"
+    output_img_path = "input_quadrant.img"
     
     with Image.open(input_image_path) as img:
         img = img.convert('RGB')
         quadrants = divide_image_into_quadrants(img)
         selected_quadrant_index = select_quadrant_from_console()
         selected_quadrant = quadrants[selected_quadrant_index]
-        convert_quadrant_to_img(selected_quadrant, output_img_path)
-        print(f"Selected quadrant saved to {output_img_path}")
+        convert_quadrant_to_grayscale_img(selected_quadrant, output_img_path)
+        print(f"Selected grayscale quadrant saved to {output_img_path}")

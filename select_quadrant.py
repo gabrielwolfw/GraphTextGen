@@ -48,7 +48,7 @@ def convert_quadrant_to_grayscale_img(quadrant, output_img_path):
         pixel_data.tofile(f)
 
 if __name__ == "__main__":
-    input_image_path = "input_image.png"
+    input_image_path = "input2.png"
     output_img_path = "input_quadrant.img"
     
     with Image.open(input_image_path) as img:

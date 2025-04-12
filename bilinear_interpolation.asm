@@ -23,18 +23,18 @@ section .data
     
     ; Image dimensions
     input_width     dq 180      ; Width of input quadrant
-    input_height    dq 177      ; Height of input quadrant
+    input_height    dq 170      ; Height of input quadrant
     
     ; Output dimensions (computed as 2x input)
     output_width    dd 360      ; 2 * input_width (as 32-bit for header)
-    output_height   dd 354      ; 2 * input_height (as 32-bit for header)
+    output_height   dd 340      ; 2 * input_height (as 32-bit for header)
     channels        dd 1        ; Grayscale image (1 channel)
     
 section .bss
     input_fd        resq 1      ; File descriptor for input file
     output_fd       resq 1      ; File descriptor for output file
-    input_buffer    resb 32000  ; Buffer for input image (180*177 = ~32000)
-    output_buffer   resb 128000 ; Buffer for output image (360*354 = ~128000)
+    input_buffer    resb 31000  ; Buffer for input image (180*170 = ~32000)
+    output_buffer   resb 123000 ; Buffer for output image (360*340 = ~123000)
     header_buffer   resb 12     ; Buffer for header (width, height, channels)
 
 section .text
@@ -53,7 +53,7 @@ _start:
     mov rax, SYS_READ
     mov rdi, [input_fd]
     mov rsi, input_buffer
-    mov rdx, 32000            ; Input buffer size
+    mov rdx, 31000            ; Input buffer size
     syscall
     
     ; Close input file
@@ -93,7 +93,7 @@ _start:
     mov rax, SYS_WRITE
     mov rdi, [output_fd]
     mov rsi, output_buffer+12
-    mov rdx, 127296           ; Output image size (360*354)
+    mov rdx, 122400           ; Output image size (360*340)
     syscall
     
     ; Close output file

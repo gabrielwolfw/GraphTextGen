@@ -125,10 +125,10 @@ python3 convert_to_png.py
 
 2. Selección del Cuadrante:
    - Cuadrante #6 seleccionado (fila 2, columna 2).
-   - Dimensiones del cuadrante: 180x177 píxeles.
+   - Dimensiones del cuadrante: 180x170 píxeles.
 
 3. Resultado Interpolado:
-   - Dimensiones: 360x354 píxeles.
+   - Dimensiones: 360x340 píxeles.
    - Guardado como: `converted_image.png`.
 
 4. Visualización:

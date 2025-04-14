@@ -25,14 +25,13 @@ Este proyecto implementa un sistema para realizar interpolación bilineal en im�
 
 ```
 Proyecto
-├── bilinear_framework.py     # Framework en Python para gestionar todo el flujo del proceso
-├── bilinear_interpolation.asm # Código ensamblador para la interpolación bilineal
-├── convert_to_png.py         # Script de conversión de archivos .img a PNG
-├── input_image.jpg           # Imagen de entrada (ejemplo)
-├── input_quadrant.img        # Archivo temporal para el cuadrante seleccionado
-├── result.img                # Archivo generado por el ensamblador con la imagen interpolada
-├── converted_image.png       # Resultado final en formato PNG
-└── README.md                 # Instrucciones y documentación del proyecto
+├── main.py                      # Framework en Python para gestionar todo el flujo del proceso
+├── bilinear_interpolation.asm   # Código ensamblador para la interpolación bilineal
+├── input_image.jpg              # Imagen de entrada (ejemplo)
+├── input_quadrant.img           # Archivo temporal para el cuadrante seleccionado
+├── result.img                   # Archivo generado por el ensamblador con la imagen interpolada
+├── converted_image.png          # Resultado final en formato PNG
+└── README.md                    # Instrucciones y documentación del proyecto
 ```
 
 ---
@@ -66,7 +65,7 @@ python3 main.py
 ```
 
 Sigue las instrucciones en la terminal:
-1. Ingresa la ruta de la imagen de entrada (por defecto: `input_image.jpg`).
+1. Ingresa la ruta de la imagen de entrada (por defecto: `input.png`).
 2. Selecciona el número del cuadrante (1-16).
 3. El programa:
    - Divide la imagen en cuadrantes.
@@ -98,13 +97,6 @@ En caso de que necesites compilar el ensamblador manualmente:
    ```bash
    ./bilinear_interpolation
    ```
-
-#### Conversión a PNG Manual
-Si se necesita convertir un archivo `.img` generado por el ensamblador:
-```bash
-python3 convert_to_png.py
-```
-
 ---
 
 ## Notas Técnicas
@@ -120,8 +112,8 @@ python3 convert_to_png.py
 ## Ejemplo de Ejecución
 
 1. Imagen Original:
-   - Ruta: `input_image.jpg`
-   - Dimensiones: 720x720 píxeles.
+   - Ruta: `input_image.png`
+   - Dimensiones: 720x680 píxeles.
 
 2. Selección del Cuadrante:
    - Cuadrante #6 seleccionado (fila 2, columna 2).

@@ -108,7 +108,7 @@ _start:
 
 ;----------------------------------------------------------
 ; Function: interpolate
-; Simple bilinear interpolation
+; Bilinear interpolation following academic requirements
 ;
 ; Input:
 ;   RSI = pointer to input buffer
@@ -169,7 +169,7 @@ interpolate:
     inc r12                   ; y++
     jmp .loop_y1
     
-    ; Step 2: Interpolate horizontal pixels
+    ; Step 2: Interpolate horizontal pixels with weighted average
 .step2:
     xor r12, r12              ; y = 0
     
@@ -193,11 +193,18 @@ interpolate:
     inc rax
     movzx r15, byte [rsi + rax]       ; right pixel
     
-    ; Average the pixels
-    add r14, r15
-    shr r14, 1                        ; (left + right) / 2
+    ; Apply weighted interpolation: left*2/3 + right*1/3
+    mov rbx, r14              ; Copy left to rbx
+    shl rbx, 1                ; left * 2
+    add rbx, r15              ; left*2 + right
+    mov rax, rbx
+    xor rdx, rdx              ; Zero out rdx for division
+    mov rbx, 3
+    div rbx                   ; (left*2 + right) / 3 = left*2/3 + right*1/3
     
     ; Calculate output offset: (2*y) * out_width + (2*x + 1)
+    push rax                  ; Save interpolated value
+    
     mov rax, r12
     shl rax, 1                ; 2*y
     mul r10                   ; * output_width
@@ -206,8 +213,44 @@ interpolate:
     inc rdx                   ; 2*x + 1
     add rax, rdx
     
+    pop rdx                   ; Restore interpolated value to rdx
+    
     ; Write interpolated pixel
-    mov byte [rdi + rax], r14b
+    mov byte [rdi + rax], dl
+    
+    ; Get left and right pixels again for the second interpolation point
+    mov rax, r12
+    mul r8
+    add rax, r13
+    movzx r14, byte [rsi + rax]       ; left pixel
+    inc rax
+    movzx r15, byte [rsi + rax]       ; right pixel
+    
+    ; Apply weighted interpolation: left*1/3 + right*2/3
+    mov rbx, r15              ; Copy right to rbx
+    shl rbx, 1                ; right * 2
+    add rbx, r14              ; right*2 + left
+    mov rax, rbx
+    xor rdx, rdx              ; Zero out rdx for division
+    mov rbx, 3
+    div rbx                   ; (right*2 + left) / 3 = right*2/3 + left*1/3
+    
+    ; Store interpolated value temporarily
+    push rax
+    
+    ; Calculate output offset for second horizontal pixel: (2*y) * out_width + (2*x + 3)
+    mov rax, r12
+    shl rax, 1                ; 2*y
+    mul r10                   ; * output_width
+    mov rdx, r13
+    shl rdx, 1                ; 2*x
+    add rdx, 3                ; 2*x + 3
+    add rax, rdx
+    
+    pop rdx                   ; Restore interpolated value
+    
+    ; Write second interpolated horizontal pixel
+    mov byte [rdi + rax], dl
     
     inc r13                   ; x++
     jmp .loop_x2
@@ -216,7 +259,7 @@ interpolate:
     inc r12                   ; y++
     jmp .loop_y2
     
-    ; Step 3: Interpolate vertical pixels
+    ; Step 3: Interpolate vertical pixels with weighted average
 .step3:
     xor r12, r12              ; y = 0
     
@@ -230,22 +273,29 @@ interpolate:
     cmp r13, r8               ; Compare x with width
     jge .next_y3              ; If x >= width, next row
     
-    ; Calculate top pixel offset
+    ; Calculate offsets for top and bottom pixels
     mov rax, r12
     mul r8
     add rax, r13
     movzx r14, byte [rsi + rax]  ; top pixel
     
-    ; Calculate bottom pixel offset
     mov rax, r12
     inc rax
     mul r8
     add rax, r13
     movzx r15, byte [rsi + rax]  ; bottom pixel
     
-    ; Average the pixels
-    add r14, r15
-    shr r14, 1                   ; (top + bottom) / 2
+    ; Apply weighted interpolation: top*2/3 + bottom*1/3
+    mov rbx, r14              ; Copy top to rbx
+    shl rbx, 1                ; top * 2
+    add rbx, r15              ; top*2 + bottom
+    mov rax, rbx
+    xor rdx, rdx              ; Zero out rdx for division
+    mov rbx, 3
+    div rbx                   ; (top*2 + bottom) / 3 = top*2/3 + bottom*1/3
+    
+    ; Store interpolated value temporarily
+    push rax
     
     ; Calculate output offset: (2*y + 1) * out_width + (2*x)
     mov rax, r12
@@ -256,8 +306,48 @@ interpolate:
     shl rdx, 1                ; 2*x
     add rax, rdx
     
+    pop rdx                   ; Restore interpolated value
+    
     ; Write interpolated pixel
-    mov byte [rdi + rax], r14b
+    mov byte [rdi + rax], dl
+    
+    ; Get top and bottom pixels again for the second interpolation point
+    mov rax, r12
+    mul r8
+    add rax, r13
+    movzx r14, byte [rsi + rax]  ; top pixel
+    
+    mov rax, r12
+    inc rax
+    mul r8
+    add rax, r13
+    movzx r15, byte [rsi + rax]  ; bottom pixel
+    
+    ; Apply weighted interpolation: top*1/3 + bottom*2/3
+    mov rbx, r15              ; Copy bottom to rbx
+    shl rbx, 1                ; bottom * 2
+    add rbx, r14              ; bottom*2 + top
+    mov rax, rbx
+    xor rdx, rdx              ; Zero out rdx for division
+    mov rbx, 3
+    div rbx                   ; (bottom*2 + top) / 3 = bottom*2/3 + top*1/3
+    
+    ; Store interpolated value temporarily
+    push rax
+    
+    ; Calculate output offset for second vertical pixel: (2*y + 3) * out_width + (2*x)
+    mov rax, r12
+    shl rax, 1                ; 2*y
+    add rax, 3                ; 2*y + 3
+    mul r10                   ; * output_width
+    mov rdx, r13
+    shl rdx, 1                ; 2*x
+    add rax, rdx
+    
+    pop rdx                   ; Restore interpolated value
+    
+    ; Write second interpolated vertical pixel
+    mov byte [rdi + rax], dl
     
     inc r13                   ; x++
     jmp .loop_x3
@@ -266,7 +356,7 @@ interpolate:
     inc r12                   ; y++
     jmp .loop_y3
     
-    ; Step 4: Interpolate diagonal pixels
+    ; Step 4: Interpolate diagonal pixels using already interpolated horizontal and vertical pixels
 .step4:
     xor r12, r12              ; y = 0
     
@@ -280,39 +370,42 @@ interpolate:
     cmp r13, r8 - 1           ; Compare x with width-1
     jge .next_y4              ; If x >= width-1, next row
     
-    ; Get top-left pixel
+    ; Get horizontal interpolated pixels
     mov rax, r12
-    mul r8
-    add rax, r13
-    movzx rbx, byte [rsi + rax]    ; top-left
+    shl rax, 1                ; 2*y
+    mul r10                   ; * output_width
+    mov rdx, r13
+    shl rdx, 1                ; 2*x
+    inc rdx                   ; 2*x + 1
+    add rax, rdx
+    movzx r14, byte [rdi + rax]    ; top-horizontal
     
-    ; Get top-right pixel
+    ; Calculate offset for bottom-horizontal
+    push r14                      ; Save top-horizontal value
+    
     mov rax, r12
-    mul r8
-    add rax, r13
-    inc rax
-    movzx rcx, byte [rsi + rax]    ; top-right
+    shl rax, 1                    ; 2*y
+    add rax, 2                    ; 2*y + 2
+    mul r10                       ; * output_width
+    mov rdx, r13
+    shl rdx, 1                    ; 2*x
+    inc rdx                       ; 2*x + 1
+    add rax, rdx
+    movzx r15, byte [rdi + rax]   ; bottom-horizontal
     
-    ; Get bottom-left pixel
-    mov rax, r12
-    inc rax
-    mul r8
-    add rax, r13
-    movzx rdx, byte [rsi + rax]    ; bottom-left
+    pop r14                       ; Restore top-horizontal value
     
-    ; Get bottom-right pixel
-    mov rax, r12
-    inc rax
-    mul r8
-    add rax, r13
-    inc rax
-    movzx r15, byte [rsi + rax]    ; bottom-right
+    ; Apply weighted interpolation for diagonal: top-horizontal*2/3 + bottom-horizontal*1/3
+    mov rbx, r14              ; Copy top-horizontal to rbx
+    shl rbx, 1                ; top-horizontal * 2
+    add rbx, r15              ; top-horizontal*2 + bottom-horizontal
+    mov rax, rbx
+    xor rdx, rdx              ; Zero out rdx for division
+    mov rbx, 3
+    div rbx                   ; (top-horizontal*2 + bottom-horizontal) / 3
     
-    ; Average the four pixels
-    add rbx, rcx
-    add rbx, rdx
-    add rbx, r15
-    shr rbx, 2                     ; (tl + tr + bl + br) / 4
+    ; Store interpolated value temporarily
+    push rax
     
     ; Calculate output offset: (2*y + 1) * out_width + (2*x + 1)
     mov rax, r12
@@ -324,8 +417,10 @@ interpolate:
     inc rdx                   ; 2*x + 1
     add rax, rdx
     
-    ; Write interpolated pixel
-    mov byte [rdi + rax], bl
+    pop rdx                   ; Restore interpolated value
+    
+    ; Write diagonal pixel
+    mov byte [rdi + rax], dl
     
     inc r13                   ; x++
     jmp .loop_x4

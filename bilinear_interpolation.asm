@@ -1,4 +1,4 @@
-; Interpolación Bilineal con formato de encabezado adecuado
+; Interpolación Bilineal 
 ; Compilar con: nasm -f elf64 bilinear_interpolation.asm -o bilinear_interpolation.o
 ; Enlazar con: ld bilinear_interpolation.o -o bilinear_interpolation
 

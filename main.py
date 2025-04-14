@@ -196,9 +196,9 @@ def bilinear_framework(input_image_path, quadrant_number=1):
 
 def main():
     # Ruta de la imagen de entrada
-    input_image = input("Ingrese la ruta de la imagen de entrada (o presione Enter para usar 'input_image.jpg'): ").strip()
+    input_image = input("Ingrese la ruta de la imagen de entrada (o presione Enter para usar 'input_image.png'): ").strip()
     if not input_image:
-        input_image = "input_image.jpg"
+        input_image = "input_image.png"
     
     # Verificar que el archivo existe
     if not os.path.exists(input_image):

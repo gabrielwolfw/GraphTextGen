@@ -64,6 +64,11 @@ def bilinear_framework(input_image_path, quadrant_number=1):
     print(f"Cuadrante seleccionado: {quadrant.shape[1]}x{quadrant.shape[0]} píxeles")
     print(f"Posición: fila {row+1}, columna {col+1}")
     
+    # Guardar el cuadrante como archivo PNG (NUEVO)
+    quadrant_png = "original_quadrant.png"
+    Image.fromarray(quadrant).save(quadrant_png)
+    print(f"Cuadrante guardado como {quadrant_png}")
+    
     # Guardar el cuadrante como archivo .img con encabezado
     quadrant_file = "input_quadrant.img"
     
@@ -192,7 +197,8 @@ def bilinear_framework(input_image_path, quadrant_number=1):
     
     print("=== Procesamiento completado ===")
     
-    return input_image_path, quadrant_file, output_img_path
+    # Actualizar el valor de retorno para incluir la ruta del PNG del cuadrante
+    return input_image_path, quadrant_png, output_img_path
 
 def main():
     # Ruta de la imagen de entrada
@@ -218,5 +224,6 @@ def main():
     # Ejecutar el framework
     bilinear_framework(input_image, quadrant)
 
+# Ejecutar el script
 if __name__ == "__main__":
     main()

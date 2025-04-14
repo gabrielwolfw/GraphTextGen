@@ -224,5 +224,6 @@ def main():
     # Ejecutar el framework
     bilinear_framework(input_image, quadrant)
 
+# Ejecutar el script
 if __name__ == "__main__":
     main()

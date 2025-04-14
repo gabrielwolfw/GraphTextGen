@@ -27,10 +27,12 @@ Este proyecto implementa un sistema para realizar interpolación bilineal en im�
 Proyecto
 ├── main.py                      # Framework en Python para gestionar todo el flujo del proceso
 ├── bilinear_interpolation.asm   # Código ensamblador para la interpolación bilineal
-├── input_image.png              # Imagen de entrada (ejemplo)
+├── input#.png                   # Imagen de entrada (ejemplo)
 ├── input_quadrant.img           # Archivo temporal para el cuadrante seleccionado
 ├── result.img                   # Archivo generado por el ensamblador con la imagen interpolada
 ├── converted_image.png          # Resultado final en formato PNG
+├── original_quadrant.png        # Imagen del cuadrante original sin modificación
+├── bilinear_results.png         # Resultado con el cuadrante seleccionado, cuadrante sin aplicar la interpolación y el cuadrante con la interpolación aplicada
 └── README.md                    # Instrucciones y documentación del proyecto
 ```
 
@@ -42,7 +44,9 @@ Proyecto
 
 1. **Python 3.8+** con las bibliotecas necesarias instaladas:
    ```bash
-   pip install numpy pillow matplotlib
+   sudo apt update
+   sudo apt install python3-pip
+   sudo pip3 install numpy pillow matplotlib
    ```
 2. **NASM** instalado para compilar el código ensamblador:
    ```bash

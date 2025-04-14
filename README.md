@@ -9,7 +9,7 @@ Este proyecto implementa un sistema para realizar interpolación bilineal en im�
 ### 1. **Python**
 - **Bibliotecas**: 
   - `numpy`: Para manipulación de matrices de píxeles.
-  - `Pillow (PIL)`: Para trabajar con imágenes y convertirlas a formato `.png` o `.jpg` .
+  - `Pillow (PIL)`: Para trabajar con imágenes y convertirlas a formato `.png`.
   - `matplotlib`: Para visualizar los resultados y generar gráficos.
   - `subprocess`: Para ejecutar el programa ensamblador directamente desde Python.
   
@@ -27,7 +27,7 @@ Este proyecto implementa un sistema para realizar interpolación bilineal en im�
 Proyecto
 ├── main.py                      # Framework en Python para gestionar todo el flujo del proceso
 ├── bilinear_interpolation.asm   # Código ensamblador para la interpolación bilineal
-├── input_image.jpg              # Imagen de entrada (ejemplo)
+├── input_image.png              # Imagen de entrada (ejemplo)
 ├── input_quadrant.img           # Archivo temporal para el cuadrante seleccionado
 ├── result.img                   # Archivo generado por el ensamblador con la imagen interpolada
 ├── converted_image.png          # Resultado final en formato PNG
